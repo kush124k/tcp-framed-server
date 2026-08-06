@@ -1,0 +1,3 @@
+/home/kush124k/projects/tcp-framed-server/build/CMakeFiles/server.dir
+/home/kush124k/projects/tcp-framed-server/build/CMakeFiles/edit_cache.dir
+/home/kush124k/projects/tcp-framed-server/build/CMakeFiles/rebuild_cache.dir
