@@ -125,6 +125,14 @@ int main(int argc, char** argv){
                     std::memcpy(&length, read_buf.data(), 4);
                     length = ntohl(length);
 
+                    constexpr uint32_t MAX_FRAME_SIZE = 1024*1024;
+                    if(length > MAX_FRAME_SIZE){
+                        std::printf("client  fd=%d disconnected \n",fd);
+                        epoll_ctl(epfd, EPOLL_CTL_DEL, fd, nullptr);
+                        client.erase(it);
+                        break;
+                    }
+
                     if(read_buf.size() < 4 + length) break;
 
                     std::vector<uint8_t> payload(read_buf.begin() + 4, read_buf.begin() + 4 + length);
