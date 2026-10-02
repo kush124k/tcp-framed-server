@@ -33,17 +33,17 @@ int main(int argc, char** argv){
     auto listener = Socket::create_tcp();
 
     if(!listener){
-        std::fprintf(stderr, "%s \n", listener.error().c_str());
+        std::fprintf(stderr, "%s \n", listener.error().message.c_str());
         return 1;
     }
 
     if(auto result = listener->bind_and_listen(port); !result){
-        std::fprintf(stderr, "%s \n", result.error().c_str());
+        std::fprintf(stderr, "%s \n", result.error().message.c_str());
         return 1;
     }
 
     if(auto result = listener->set_nonblocking(); !result){
-        std::fprintf(stderr, "%s\n", result.error().c_str());
+        std::fprintf(stderr, "%s\n", result.error().message.c_str());
         return 1;
     }
 
@@ -79,14 +79,14 @@ int main(int argc, char** argv){
             if(events[i].data.fd == listener->fd()){
                 auto client = listener->accept();
                 if(!client){
-                    std::fprintf(stderr, "%s \n", client.error().c_str());
+                    std::fprintf(stderr, "%s \n", client.error().message.c_str());
                     continue;
                 }
 
                 int client_fd =client->fd();
 
                 if(auto result = client->set_nonblocking(); !result){
-                    std::fprintf(stderr, "%s\n", result.error().c_str());
+                    std::fprintf(stderr, "%s\n", result.error().message.c_str());
                     continue;
                 }
                 epoll_event client_ev{};
@@ -129,7 +129,7 @@ int main(int argc, char** argv){
                     if(length > MAX_FRAME_SIZE){
                         std::printf("client  fd=%d disconnected \n",fd);
                         epoll_ctl(epfd, EPOLL_CTL_DEL, fd, nullptr);
-                        client.erase(it);
+                        clients.erase(it);
                         break;
                     }
 
