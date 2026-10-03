@@ -108,7 +108,15 @@ int main(int argc, char** argv){
                 uint8_t buf[1024];
                 auto result = it->second.socket.read_some(buf, sizeof(buf));
 
-                if(!result || *result == 0){
+                if(!result && (result.error().err ==EAGAIN || result.error().err ==EWOULDBLOCK)){
+                    continue;
+                }else if(!result ){
+                    std::fprintf(stderr, "%s\n",result.error().message.c_str());
+                    std::printf("client fd=%d disconnected \n", fd);
+                    epoll_ctl(epfd, EPOLL_CTL_DEL, fd, nullptr);
+                    clients.erase(it);
+                    continue;
+                }else if(!result  || *result == 0){
                     std::printf("client fd=%d disconnected \n", fd);
                     epoll_ctl(epfd, EPOLL_CTL_DEL, fd, nullptr);
                     clients.erase(it);
